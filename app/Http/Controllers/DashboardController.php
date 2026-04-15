@@ -2,20 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use App\Models\Movie;
-use App\Models\Showtime;
-use App\Models\Theater;
+use App\Models\movies as movie;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         return view('page.dashboard', [
-            'movies'    => Movie::all(),
-            'theaters'  => Theater::all(),
-            'showtimes' => Showtime::with(['movie', 'theater'])->get(),
-            'bookings'  => Booking::with(['user', 'showtime.movie'])->get(),
+            'movies' => movie::all(),
         ]);
     }
 }

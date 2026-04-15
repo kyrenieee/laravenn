@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         User::factory(9)->create();
 
         // 2. Movies
-        movies::factory(50)->create();
+        movies::factory(30)->create();
 
         // 3. Halls
         halls::factory(3)->create();
