@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Booking;
-use App\Models\Movie;
-use App\Models\Showtime;
-use App\Models\Theater;
+use App\Models\bookings;
+use App\Models\halls;
+use App\Models\movies;
+use App\Models\seats;
+use App\Models\showtimes;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,46 +19,30 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Users (1 admin + 9 customers = 10 total)
         User::factory()->create([
-            'name'     => 'Admin',
-            'email'    => 'admin@cinemaworld.com',
+            'name' => 'Admin',
+            'email' => 'admin@cinemaworld.com',
             'password' => bcrypt('password123'),
-            'role'     => 'admin',
+            'role' => 'admin',
         ]);
 
-        User::factory(9)->create(['role' => 'customer']);
+        User::factory(9)->create();
 
-        // 2. Movies – 10 records
-        Movie::factory(10)->create();
+        // 2. Movies
+        movies::factory(50)->create();
 
-        // 3. Theaters – 10 records
-        Theater::factory(10)->create();
+        // 3. Halls
+        halls::factory(3)->create();
 
-        // 4. Showtimes – 10 records, reuse existing movies & theaters
-        $movieIds   = Movie::pluck('movie_id');
-        $theaterIds = Theater::pluck('theater_id');
-
-        Showtime::factory(10)->create([
-            'movie_id'   => fn() => $movieIds->random(),
-            'theater_id' => fn() => $theaterIds->random(),
-        ]);
-
-        // 5. Bookings – 10 records, reuse existing users & showtimes
-        $userIds     = User::where('role', 'customer')->pluck('id');
-        $showtimeIds = Showtime::pluck('showtime_id');
-
-        for ($i = 0; $i < 10; $i++) {
-            $showtimeId = $showtimeIds->random();
-            $row        = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'][array_rand(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])];
-            $seatNumber = $row . ($i + 1);
-
-            Booking::firstOrCreate(
-                ['showtime_id' => $showtimeId, 'seat_number' => $seatNumber],
-                [
-                    'user_id'      => $userIds->random(),
-                    'booking_date' => now()->subDays(rand(0, 30)),
-                    'status'       => $i < 7 ? 'confirmed' : 'cancelled',
-                ]
-            );
+        // 4. Seats (create seats for each hall)
+        $halls = halls::all();
+        foreach ($halls as $hall) {
+            seats::factory($hall->total_seats)->create(['hall_id' => $hall->id]);
         }
+
+        // 5. Showtimes
+        showtimes::factory(10)->create();
+
+        // 6. Bookings
+        bookings::factory(10)->create();
     }
 }

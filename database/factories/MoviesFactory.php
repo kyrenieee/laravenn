@@ -2,15 +2,18 @@
 
 namespace Database\Factories;
 
+use App\Models\movies;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
-class MovieFactory extends Factory
+/**
+ * @extends Factory<movies>
+ */
+class MoviesFactory extends Factory
 {
-    private static int $index = 0;
-
     /**
-     * Curated Anime List (50 Entries)
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
     private static array $animes = [
         ['title' => 'Death Note', 'director' => 'Tetsuro Araki', 'genre' => 'Mystery', 'duration' => 24, 'year' => '2006', 'image' => 'https://cdn.myanimelist.net/images/anime/9/9453.jpg'],
@@ -65,6 +68,10 @@ class MovieFactory extends Factory
         ['title' => 'Blue Exorcist', 'director' => 'Tensai Okamura', 'genre' => 'Fantasy', 'duration' => 24, 'year' => '2011', 'image' => 'https://cdn.myanimelist.net/images/anime/10/75195.jpg'],
     ];
 
+    private static int $index = 0;
+
+    protected $model = movies::class;
+
     public function definition(): array
     {
         if (self::$index < count(self::$animes)) {
@@ -73,7 +80,7 @@ class MovieFactory extends Factory
             $director = $anime['director'];
             $genre = $anime['genre'];
             $duration = $anime['duration'];
-            $date = $anime['year'] . '-01-01';
+            $date = $anime['year'].'-01-01';
             $image = $anime['image'];
         } else {
             // Fallback if you call for more than 50
@@ -82,20 +89,20 @@ class MovieFactory extends Factory
             $genre = $this->faker->randomElement(['Action', 'Adventure', 'Fantasy', 'Romance', 'Sci-Fi']);
             $duration = $this->faker->numberBetween(20, 150);
             $date = $this->faker->date();
-            $image = "https://cdn.myanimelist.net/images/anime/10/73274.jpg"; // Default to Akira image
+            $image = 'https://cdn.myanimelist.net/images/anime/10/73274.jpg'; // Default to Akira image
         }
 
         self::$index++;
 
         return [
             // Matches your migration fields exactly
-            'title'        => $title,
-            'description'  => $this->faker->paragraph(2),
-            'director'     => $director,
-            'duration'     => $duration,
+            'title' => $title,
+            'description' => $this->faker->paragraph(2),
+            'director' => $director,
+            'duration' => $duration,
             'release_date' => $date,
-            'genre'        => $genre,
-            'poster_url'   => $image,
+            'genre' => $genre,
+            'image_url' => $image,
         ];
     }
 }
