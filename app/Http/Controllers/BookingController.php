@@ -12,7 +12,17 @@ class BookingController extends Controller
      */
     public function index()
     {
-        //
+        $userBookings = auth()->user()->bookings()
+            ->with('showtime.movie', 'showtime.hall', 'seat')
+            ->orderByDesc('created_at')
+            ->get();
+
+        // Group bookings by showtime to represent a single "ticket" per show.
+        $groupedBookings = $userBookings->groupBy('showtime_id');
+
+        return view('bookings.index', [
+            'groupedBookings' => $groupedBookings,
+        ]);
     }
 
     /**

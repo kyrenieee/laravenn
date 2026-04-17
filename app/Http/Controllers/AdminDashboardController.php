@@ -10,12 +10,6 @@ use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-
-    }
-
     // Dashboard Overview
     public function index()
     {
@@ -36,8 +30,9 @@ class AdminDashboardController extends Controller
     public function movies()
     {
         $movies = movies::all();
+        $halls = halls::all();
 
-        return view('admin.movies.index', compact('movies'));
+        return view('admin.movies.index', compact('movies', 'halls'));
     }
 
     public function createMovie()
@@ -55,9 +50,14 @@ class AdminDashboardController extends Controller
             'duration' => 'required|integer|min:1',
             'release_date' => 'required|date',
             'image_url' => 'required|url',
+            'hall_id' => 'required|exists:halls,id',
         ]);
 
         movies::create($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Movie added successfully!']);
+        }
 
         return redirect()->route('admin.movies')->with('success', 'Movie added successfully!');
     }
@@ -77,9 +77,14 @@ class AdminDashboardController extends Controller
             'duration' => 'required|integer|min:1',
             'release_date' => 'required|date',
             'image_url' => 'required|url',
+            'hall_id' => 'required|exists:halls,id',
         ]);
 
         $movie->update($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Movie updated successfully!']);
+        }
 
         return redirect()->route('admin.movies')->with('success', 'Movie updated successfully!');
     }
@@ -113,18 +118,30 @@ class AdminDashboardController extends Controller
 
         $hall = halls::create($validated);
 
-        // Create seats for this hall
-        $rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-        $seatsPerRow = ceil($validated['total_seats'] / count($rows));
+        // Create a structured grid of seats for this hall
+        if ($validated['total_seats'] > 0) {
+            $seatsToCreate = [];
+            $rows = range('A', 'J'); // Up to 10 rows
+            $seatsPerRow = 10; // Assuming a standard 10x10 grid or similar
 
-        foreach ($rows as $row) {
-            for ($i = 1; $i <= $seatsPerRow; $i++) {
-                seats::create([
-                    'hall_id' => $hall->id,
-                    'row' => $row,
-                    'number' => $i,
-                ]);
+            $seatCounter = 0;
+            foreach ($rows as $row) {
+                for ($number = 1; $number <= $seatsPerRow; $number++) {
+                    if ($seatCounter >= $validated['total_seats']) {
+                        break 2; // Exit both loops
+                    }
+                    $seatsToCreate[] = [
+                        'hall_id' => $hall->id,
+                        'row' => $row,
+                        'number' => $number,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                    $seatCounter++;
+                }
             }
+            // Use a bulk insert for better performance
+            seats::insert($seatsToCreate);
         }
 
         return redirect()->route('admin.halls')->with('success', 'Hall added successfully with seats!');

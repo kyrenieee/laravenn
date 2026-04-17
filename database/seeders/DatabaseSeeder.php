@@ -25,18 +25,36 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        User::factory(9)->create();
+        User::factory(10)->create();
 
         // 2. Movies
-        movies::factory(30)->create();
+        movies::factory(10)->create();
 
         // 3. Halls
-        halls::factory(3)->create();
+        halls::factory(10)->create();
 
         // 4. Seats (create seats for each hall)
-        $halls = halls::all();
-        foreach ($halls as $hall) {
-            seats::factory($hall->total_seats)->create(['hall_id' => $hall->id]);
+        $hallsData = halls::all();
+        foreach ($hallsData as $hall) {
+            if ($hall->total_seats > 0) {
+                $rows = range('A', 'J'); // 10 rows
+                $seatsPerRow = 10; // 10 seats per row, for a max of 100 seats
+
+                $seatCounter = 0;
+                foreach ($rows as $row) {
+                    for ($number = 1; $number <= $seatsPerRow; $number++) {
+                        if ($seatCounter >= $hall->total_seats) {
+                            break 2;
+                        }
+                        seats::create([
+                            'hall_id' => $hall->id,
+                            'row' => $row,
+                            'number' => $number,
+                        ]);
+                        $seatCounter++;
+                    }
+                }
+            }
         }
 
         // 5. Showtimes

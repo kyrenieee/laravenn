@@ -1,6 +1,9 @@
 {
     "agents": [
-        "copilot"
+        "claude_code"
     ],
-    "guidelines": true
+    "skills": [
+        "pest-testing",
+        "tailwindcss-development"
+    ]
 }

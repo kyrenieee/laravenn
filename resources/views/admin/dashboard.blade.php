@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12" x-data="{}">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Statistics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -35,30 +35,30 @@
                 <!-- Movies Management -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <h3 class="text-lg font-semibold mb-4">Movies Management</h3>
+                        <h3 class="text-lg font-semibold mb-4">🎬 Movies Management</h3>
                         <p class="text-gray-600 dark:text-gray-400 mb-4">Manage cinema movies</p>
                         <div class="space-y-2">
-                            <a href="{{ route('admin.movies') }}" class="block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <a href="{{ route('admin.movies') }}" class="block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">
                                 View All Movies
                             </a>
-                            <a href="{{ route('admin.movies.create') }}" class="block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                Add New Movie
-                            </a>
+                            <button
+                                @click="$dispatch('open-modal', 'movie-form-modal')"
+                                class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition"
+                            >
+                                ➕ Add New Movie
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Halls Management -->
+                <!-- Total Showtimes -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <h3 class="text-lg font-semibold mb-4">Halls Management</h3>
-                        <p class="text-gray-600 dark:text-gray-400 mb-4">Manage cinema halls and seats</p>
+                        <h3 class="text-lg font-semibold mb-4">📽️ Showtimes</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Current and upcoming showtimes</p>
                         <div class="space-y-2">
-                            <a href="{{ route('admin.halls') }}" class="block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                View All Halls
-                            </a>
-                            <a href="{{ route('admin.halls.create') }}" class="block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                Add New Hall
+                            <a href="{{ route('showtimes.index') }}" class="block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">
+                                View All Showtimes
                             </a>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
             <!-- Recent Bookings -->
             <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <h3 class="text-lg font-semibold mb-4">Recent Bookings</h3>
+                    <h3 class="text-lg font-semibold mb-4">📅 Recent Bookings</h3>
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
                             <thead>
@@ -82,9 +82,9 @@
                             </thead>
                             <tbody>
                                 @foreach($data['recentBookings'] as $booking)
-                                <tr class="border-b">
+                                <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                                     <td class="px-4 py-2">{{ $booking->user->name }}</td>
-                                    <td class="px-4 py-2">Movie {{ $booking->showtime->movie_id }}</td>
+                                    <td class="px-4 py-2">{{ $booking->showtime->movie->title }}</td>
                                     <td class="px-4 py-2">{{ $booking->seat->row }}{{ $booking->seat->number }}</td>
                                     <td class="px-4 py-2">${{ number_format($booking->price, 2) }}</td>
                                     <td class="px-4 py-2">{{ $booking->created_at->format('M d, Y') }}</td>
@@ -97,4 +97,7 @@
             </div>
         </div>
     </div>
+
+    <!-- Add Movie Modal -->
+    <x-admin-movie-modal :halls="$data['halls']" />
 </x-app-layout>

@@ -19,9 +19,23 @@ class SeatsFactory extends Factory
     public function definition(): array
     {
         return [
-            'hall_id' => halls::factory(), // Automatically creates a Hall for each seat
-            'row' => fake()->randomElement(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']), // Typical cinema rows
-            'number' => fake()->numberBetween(1, 20),
+            'hall_id' => halls::factory(),
+            'row' => fake()->randomElement(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']),
+            'number' => fake()->numberBetween(1, 10),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (seats $seat) {
+            // Ensure seats match hall capacity (max 100 for 10x10)
+            $hall = $seat->hall;
+            $totalSeatsInHall = $hall->seats()->count();
+
+            if ($totalSeatsInHall > 100) {
+                // Delete excess seats
+                $hall->seats()->latest()->limit($totalSeatsInHall - 100)->delete();
+            }
+        });
     }
 }

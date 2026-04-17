@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\movies;
 use App\Models\showtimes;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,11 @@ class ShowtimeController extends Controller
      */
     public function index()
     {
-        //
+        $movies = movies::with('showtimes.hall')
+            ->whereHas('showtimes')
+            ->get();
+
+        return view('showtimes.index', compact('movies'));
     }
 
     /**

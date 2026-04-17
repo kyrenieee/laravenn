@@ -15,20 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('movies.index')" :active="request()->routeIs('movies.*')">
-                        {{ __('Movies') }}
-                    </x-nav-link>
                     <x-nav-link :href="route('showtimes.index')" :active="request()->routeIs('showtimes.*')">
                         {{ __('Showtimes') }}
                     </x-nav-link>
                     <x-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.*')">
                         {{ __('Tickets') }}
                     </x-nav-link>
-                    @if(Auth::user()->role === 'admin')
-                    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                        {{ __('Admin') }}
-                    </x-nav-link>
-                    @endif
                 </div>
             </div>
 
@@ -48,6 +40,17 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <div class="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
+                            Role: <span class="font-semibold capitalize">{{ Auth::user()->role }}</span>
+                            @if(Auth::user()->role === 'admin')
+                            <div class="mt-2">
+                                <a href="{{ route('admin.dashboard') }}" class="block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                    {{ __('Admin Dashboard') }}
+                                </a>
+                            </div>
+                            @endif
+                        </div>
+
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\BookingApiController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HallController;
@@ -13,7 +14,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('splash');
+    return redirect()->route('dashboard');
 })->name('home');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -26,6 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/tables', [TablesController::class, 'index'])->name('tables');
+    Route::get('/reserve', function () {
+        return view('page.reserve');
+    })->name('reserve');
 
     Route::resource('users', UserController::class);
     Route::resource('movies', MovieController::class);
@@ -33,6 +37,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('seats', SeatController::class);
     Route::resource('bookings', BookingController::class);
     Route::resource('showtimes', ShowtimeController::class);
+});
+
+// API Routes for Booking System (Outside auth group but protected with auth middleware and proper JSON headers)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/api/showtimes/{showtime}/seats', [BookingApiController::class, 'getShowtimeSeats'])->name('api.showtimes.seats');
+    Route::post('/api/bookings', [BookingApiController::class, 'store'])->name('api.bookings.store');
 });
 
 // Admin Routes

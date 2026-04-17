@@ -20,6 +20,7 @@ class movies extends Model
         'director',
         'release_date',
         'image_url',
+        'hall_id',
     ];
 
     protected function casts(): array
@@ -33,5 +34,10 @@ class movies extends Model
     public function showtimes(): HasMany
     {
         return $this->hasMany(showtimes::class, 'movie_id');
+    }
+
+    public function hall()
+    {
+        return $this->belongsTo(halls::class, 'hall_id');
     }
 }

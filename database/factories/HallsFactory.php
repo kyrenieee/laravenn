@@ -18,9 +18,9 @@ class HallsFactory extends Factory
     private static int $index = 0;
 
     private static array $halls = [
-        ['hall_number' => 'Hall A', 'total_seats' => 240],
-        ['hall_number' => 'Hall B', 'total_seats' => 200],
-        ['hall_number' => 'Hall C', 'total_seats' => 180],
+        ['hall_number' => 'Hall A', 'total_seats' => 100],
+        ['hall_number' => 'Hall B', 'total_seats' => 100],
+        ['hall_number' => 'Hall C', 'total_seats' => 100],
     ];
 
     public function definition(): array
