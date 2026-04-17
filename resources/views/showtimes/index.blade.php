@@ -20,6 +20,89 @@
                     </div>
                 </div>
 
+                            <!-- Today's Showtimes Section -->
+            <div class="mt-16">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-1 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full"></div>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Today's Showtimes</h3>
+                    </div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                        <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                        </svg>
+                        {{ now()->format('l, F d, Y') }}
+                    </div>
+                </div>
+
+                @php
+                    // Get today's showtimes from your existing data
+                    $todayShowtimes = [];
+                    foreach($movies as $movie) {
+                        foreach($movie->showtimes as $showtime) {
+                            if($showtime->start_time->isToday()) {
+                                $todayShowtimes[] = $showtime;
+                            }
+                        }
+                    }
+                @endphp
+
+                @if(count($todayShowtimes) > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    @foreach($todayShowtimes as $showtime)
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:scale-[1.02]">
+                        <div class="flex p-3 gap-3">
+                            <!-- Movie Poster -->
+                            <div class="w-16 h-20 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src="{{ $showtime->movie->image_url }}" alt="{{ $showtime->movie->title }}" class="w-full h-full object-cover">
+                            </div>
+                            
+                            <!-- Showtime Info -->
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm line-clamp-1">{{ $showtime->movie->title }}</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ $showtime->movie->genre }}</p>
+                                
+                                <div class="flex items-center gap-2 mt-2">
+                                    <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded-full font-semibold">
+                                        {{ $showtime->start_time->format('h:i A') }}
+                                    </span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">Hall {{ $showtime->hall->hall_number ?? '1' }}</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-sm font-bold text-green-600 dark:text-green-400">₱{{ number_format($showtime->price ?? 300, 2) }}</span>
+                                    <button 
+                                        @click="$dispatch('open-modal', 'seat-selection-modal-{{ $showtime->id }}')"
+                                        class="px-3 py-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs rounded-lg transition transform hover:scale-105">
+                                        Book Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 text-center">
+                    <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <p class="mt-2 text-gray-500 dark:text-gray-400">No showtimes available for today</p>
+                    <p class="text-sm text-gray-400">Check back tomorrow for more showtimes!</p>
+                </div>
+                @endif
+                
+                <!-- View All Link -->
+                <div class="text-center mt-6">
+                    <a href="{{ route('showtimes.index') }}" class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 font-medium transition">
+                        View All Showtimes
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($movies as $movie)
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-700">
@@ -69,7 +152,6 @@
                                     @endforelse
                                 </div>
                             </div>
-
                             <!-- Get Ticket Button -->
                             <button
                                 @click="$dispatch('open-modal', 'booking-modal-{{ $movie->id }}')"
