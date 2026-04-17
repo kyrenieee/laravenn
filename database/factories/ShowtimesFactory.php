@@ -22,7 +22,7 @@ class ShowtimesFactory extends Factory
         return [
             // Connects to a random Movie and CinemaHall
             'movie_id' => movies::factory(),
-            'hall_id' => halls::factory(),
+            'hall_id' => halls::all()->random()->id,
 
             // Generates a random time within the next 4 weeks, rounded to the nearest 30 mins
             'start_time' => $this->faker->dateTimeBetween('now', '+4 days')->format('Y-m-d H:i:00'),

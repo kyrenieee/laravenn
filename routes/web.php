@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('movies', MovieController::class);
     Route::resource('halls', HallController::class);
     Route::resource('seats', SeatController::class);
-    Route::resource('bookings', BookingController::class);
+    Route::resource('tickets', BookingController::class)->only(['index']);
     Route::resource('showtimes', ShowtimeController::class);
 });
 

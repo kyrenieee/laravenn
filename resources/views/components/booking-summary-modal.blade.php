@@ -162,7 +162,6 @@
 
                                 // Redirect to bookings page to see the new ticket
                                 setTimeout(() => {
-                                    window.location.href = '{{ route("bookings.index") }}';
                                     window.location.href = '{{ route("tickets.index") }}';
                                 }, 300);
                             } else {

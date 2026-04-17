@@ -64,7 +64,7 @@
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Your Tickets</h3>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 mb-6">View your booked tickets and reservations</p>
-                    <a href="{{ route('bookings.index') }}"
+                    <a href="{{ route('tickets.index') }}"
                         class="w-full inline-block bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition text-center">
                         🎫 My Tickets
                     </a>
@@ -81,4 +81,3 @@
     @endforeach
 
 </x-app-layout>
-
