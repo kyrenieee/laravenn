@@ -70,7 +70,7 @@
                                 </div>
                                 
                                 <div class="flex items-center justify-between mt-2">
-                                    <span class="text-sm font-bold text-green-600 dark:text-green-400">₱{{ number_format($showtime->price ?? 300, 2) }}</span>
+                                    <span class="text-sm font-bold text-green-600 dark:text-green-400">${{ number_format($showtime->price ?? 15, 2) }}</span>
                                     <button 
                                         @click="$dispatch('open-modal', 'seat-selection-modal-{{ $showtime->id }}')"
                                         class="px-3 py-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs rounded-lg transition transform hover:scale-105">
